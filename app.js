@@ -6,10 +6,12 @@ const PORT  = 3000;
 
 //Asi inicializamos express y podemos acceder a todas las funcionalidades que nos proporciona
 const app = express();
-
 //En este caso trabajamos con JSON por lo que analizamos archivos JSON
 app.use(express.json());
 
+require("dotenv").config(); //se obtiene la info de configuracion en .env
+const url_mongo = process.env.DATABASE_URL_ENV;
+console.log(url_mongo);
 
 //parte de mongoose pero primero hay que arrancar mongoose
 // db.on("error", (error) =>{
