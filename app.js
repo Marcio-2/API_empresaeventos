@@ -1,30 +1,41 @@
 //Importamos el modulo express
-const { error } = require("console");
 const express = require("express");
 //Declaramos el puerto donde queremos levantar el servidor
+const mongoose = require("mongoose");
 const PORT  = 3000;
 
 //Asi inicializamos express y podemos acceder a todas las funcionalidades que nos proporciona
 const app = express();
+
 //En este caso trabajamos con JSON por lo que analizamos archivos JSON
 app.use(express.json());
 
-require("dotenv").config(); //se obtiene la info de configuracion en .env
-const url_mongo = process.env.DATABASE_URL_ENV;
-console.log(url_mongo);
+//Importamos la configuracion para poder acceder al fichero .env
+require("dotenv").config(); 
 
-//parte de mongoose pero primero hay que arrancar mongoose
-// db.on("error", (error) =>{
-//     console.log(`Error al conectar`);
-// });
+//Recuperamos la url de conexion de mongodb del fichero env
+const url_mongodb = process.env.DATABASE_URL_DEV;
 
-// db.once("connected", () =>{
-//     console.log(`Success connect`);
-// });
+//Le indicamos a mongoose a que url se debe de conectar
+mongoose.connect(url_mongodb);
 
-// db.on("disconnected", () =>{
-//     console.log(`mongoose default connection is disconnected`);
-// });
+//Hacemos la conexion con mongoose
+const db = mongoose.connection
+
+//Comprobamos si sale el error y que nos indique el error
+db.on("error", (error) =>{
+    console.log(`Error al conectar con mongo ${error}`);
+});
+
+//Comprobamos si se ha conectado correctamente
+db.once("connected", () =>{
+    console.log(`Success connect`);
+});
+
+//Comprobamos si se ha desconectado mongodb
+db.on("disconnected", () =>{
+    console.log(`mongoose is disconnected`);
+});
 
 //Levantamos el servidor en el puerto 3000 usando la funcion listen de express
 app.listen(PORT, ()=>{
