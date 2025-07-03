@@ -16,6 +16,3 @@ app.listen(PORT, ()=>{
 
 
 
-// const mongoose = require("mongoose");
-// require("dotenv").config();
-
