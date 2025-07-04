@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const PORT  = 3000;
 
 const userRouter = require("./routers/userRouter");
+
 //Asi inicializamos express y podemos acceder a todas las funcionalidades que nos proporciona
 const app = express();
 
