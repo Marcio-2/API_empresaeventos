@@ -1,29 +1,33 @@
-// const mongoose = require("mongoose");
+//Importamos mongoose para poder utilizarlo en el fichero y crear el modelo y esquema
+const mongoose = require("mongoose");
 
+//Creamos un esquema e insetamos la estructura que queremos
 const userSchema = new mongoose.Schema({
-    name: {
-        type:String,
-        require: true
-    },
-    email: {
-        type:String,
-        require:true,
-        unique: true,
-    },
-    password: {
-        type:String,
-        require: true,
-    },
-    age: {
-        type:Number,
-    },
-    role: {
-        type: String,
-        enum: ["user","admin"],
-        default: "user",
-    },
+  name: {
+    type: String,
+    require: true, //Campo requerido
+  },
+  lastName: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type: String,
+    require: true,
+    unique: true, //Asegura que cada correo electronico sea unico en la base de datos
+  },
+  password: {
+    type: String,
+    require: true,
+  },
+  createAt: {
+    type: Date,
+    default: Date.now, //Asigna la fecha actual como valor por defecto
+  },
 });
 
-// const User =mongoose.model("User", userSchema);
+//Creamos el modelo y le indicamos el nombre, esquema y el nombre de la coleccion
+const User =mongoose.model("User", userSchema, "Users");
 
+//Exportamos el modelo
 module.exports = User;
