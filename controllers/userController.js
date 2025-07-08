@@ -1,6 +1,7 @@
 //Importamos el modelo en el controlador, donde vamos a hacer las peticiones a la base de datos
 const userModel = require("../models/userModel");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const generateToken = require("../utils/utils");
 
 //Creamos el endPoint para añadir usuario
 const signup = async (req, res) => {
@@ -26,7 +27,7 @@ const signup = async (req, res) => {
     if (error.code === 11000) {
       return res
         .status(409)
-        .json({ status: "Failed", data: null, error: error.message });
+        .json({ status: "Failed", data: null, error: "El correo electrónico ya está registrado. Usa otro." });
     }
 
     //Para cualquier otro tipo de error, devuelve una respuesta de estado 404 (no encontrado) con el mensaje de error correspondiente
@@ -47,34 +48,54 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = { signup, getUsers };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email: email });
 
-// const addUser = async (req, res) => {
-//   try {
-//     const { name, lastName, email, password, createAt } = req.body;
+    if (!user) {
+      res.status(401).json({ error: "Usuario y contraseña incorrecta" });
+    }
 
-//     const user = new User({
-//       name: name,
-//       lastName: lastName,
-//       email: email,
-//       password: password, //quizas bcrypt!
-//       createAt: createAt,
-//     });
-//     await user.save();
+    const validatePassword = await bcrypt.compare(password, user.password);
 
-//     res.status(200).json({ status: "succeded", data: user });
-//   } catch (error) {
-//     if(error.code === 1100) {
-//         return res.status(200).json({
-//             status: "Error",
-//             message: "El email ya existe",
-//         });
-//     }
+    if (!validatePassword) {
+      res.status(401).json({ error: "Usuario y contraseña incorrecta" });
+    }
 
-//     res.status(400).json({
-//         status: "Error",
-//         message: "No se pudo crear el usuario",
-//         error: error.message,
-//     });
-//   }
-// };
+    const token = generateToken(
+      {
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      false
+    );
+
+    const token_refresh = generateToken(
+      {
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      true
+    );
+
+    res.status(200).json({
+      status: "succeded",
+      data: {
+        id: user._id,
+        email:user.email,
+        role:user.role,
+        token,
+        token_refresh,
+      },
+      error: null,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error al hacer login", message: error.message });
+  }
+};
+module.exports = { signup, getUsers, login };

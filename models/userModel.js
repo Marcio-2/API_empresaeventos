@@ -5,20 +5,20 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: true, //Campo requerido
+    required: true, //Campo requerido
   },
   lastName: {
     type: String,
-    require: true,
+    required: true,
   },
   email: {
     type: String,
-    require: true,
+    required: true,
     unique: true, //Asegura que cada correo electronico sea unico en la base de datos
   },
   password: {
     type: String,
-    require: true,
+    required: true,
   },
   createAt: {
     type: Date,

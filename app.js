@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const PORT  = 3000;
 
 const userRouter = require("./routers/userRouter");
-
+const eventRouter = require("./routers/eventRouter");
 //Asi inicializamos express y podemos acceder a todas las funcionalidades que nos proporciona
 const app = express();
 
@@ -40,6 +40,7 @@ db.on("disconnected", () =>{
 });
 
 app.use("/user", userRouter);
+app.use("/events", eventRouter);
 
 //Levantamos el servidor en el puerto 3000 usando la funcion listen de express
 app.listen(PORT, ()=>{
